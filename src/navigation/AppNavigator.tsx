@@ -11,10 +11,15 @@ const Stack = createStackNavigator();
 function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="PasswordList" component={PasswordListScreen} options={{ title: '密码列表' }} />
-        <Stack.Screen name="AddEditPassword" component={AddEditPasswordScreen} options={{ title: '添加/编辑密码' }} />
-        <Stack.Screen name="PasswordDetail" component={PasswordDetailScreen} options={{ title: '密码详情' }} />
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          cardStyle: { backgroundColor: '#F5F5F5' }
+        }}
+      >
+        <Stack.Screen name="PasswordList" component={PasswordListScreen} />
+        <Stack.Screen name="AddEditPassword" component={AddEditPasswordScreen} />
+        <Stack.Screen name="PasswordDetail" component={PasswordDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

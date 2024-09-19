@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, Modal, FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, Modal, FlatList, SafeAreaView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import DatabaseService from '../services/DatabaseService';
 
 function AddEditPasswordScreen() {
@@ -27,7 +28,9 @@ function AddEditPasswordScreen() {
   const loadCategories = async () => {
     try {
       const data = await DatabaseService.getCategories();
-      setCategories(['默认', ...data]);
+      // 确保 '默认' 类别只出现一次，并且在列表开头
+      const uniqueCategories = ['默认', ...new Set(data.filter(cat => cat !== '默认'))];
+      setCategories(uniqueCategories);
     } catch (error) {
       console.error('加载类别失败', error);
     }
@@ -72,7 +75,7 @@ function AddEditPasswordScreen() {
     }
   };
 
-  const renderCategoryItem = ({ item }) => (
+  const renderCategoryItem = ({ item, index }) => (
     <TouchableOpacity
       style={styles.categoryItem}
       onPress={() => {
@@ -80,55 +83,82 @@ function AddEditPasswordScreen() {
         setShowCategoryModal(false);
       }}
     >
-      <Text>{item}</Text>
+      <Text style={styles.categoryItemText}>{item}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="标题"
-        value={title}
-        onChangeText={setTitle}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="用户名"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="密码"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.input} onPress={() => setShowCategoryModal(true)}>
-        <Text>{category || '选择类别'}</Text>
-      </TouchableOpacity>
-      <TextInput
-        style={[styles.input, styles.noteInput]}
-        placeholder="备注"
-        value={note}
-        onChangeText={setNote}
-        multiline
-      />
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>保存</Text>
-      </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={24} color="#007AFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{id ? '编辑' : '新增'}</Text>
+        <TouchableOpacity onPress={handleSave}>
+          <Text style={styles.saveButtonText}>保存</Text>
+        </TouchableOpacity>
+      </View>
+      <ScrollView>
+        <View style={styles.inputContainer}>
+          <Icon name="document-text-outline" size={20} color="#757575" style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="标题"
+            value={title}
+            onChangeText={setTitle}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Icon name="person-outline" size={20} color="#757575" style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="用户名"
+            value={username}
+            onChangeText={setUsername}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Icon name="lock-closed-outline" size={20} color="#757575" style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="密码"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+        </View>
+        <TouchableOpacity style={styles.categoryButton} onPress={() => setShowCategoryModal(true)}>
+          <Icon name="folder-outline" size={20} color="#757575" style={styles.inputIcon} />
+          <Text style={styles.categoryButtonText}>{category || '选择类别'}</Text>
+          <Icon name="chevron-down" size={20} color="#757575" />
+        </TouchableOpacity>
+        <View style={styles.inputContainer}>
+          <Icon name="create-outline" size={20} color="#757575" style={styles.inputIcon} />
+          <TextInput
+            style={[styles.input, styles.noteInput]}
+            placeholder="备注"
+            value={note}
+            onChangeText={setNote}
+            multiline
+          />
+        </View>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>保存</Text>
+        </TouchableOpacity>
+      </ScrollView>
       
       <Modal visible={showCategoryModal} animationType="slide">
-        <View style={styles.modalContainer}>
+        <SafeAreaView style={styles.modalContainer}>
+          <Text style={styles.modalHeader}>选择类别</Text>
           <FlatList
             data={categories}
             renderItem={renderCategoryItem}
-            keyExtractor={(item) => item}
+            keyExtractor={(item, index) => `${item}-${index}`}
+            style={styles.categoryList}
           />
           <View style={styles.newCategoryContainer}>
             <TextInput
-              style={[styles.input, styles.newCategoryInput]}
+              style={styles.newCategoryInput}
               placeholder="新建类别"
               value={newCategory}
               onChangeText={setNewCategory}
@@ -140,78 +170,140 @@ function AddEditPasswordScreen() {
           <TouchableOpacity style={styles.closeButton} onPress={() => setShowCategoryModal(false)}>
             <Text style={styles.closeButtonText}>关闭</Text>
           </TouchableOpacity>
-        </View>
+        </SafeAreaView>
       </Modal>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F5F5F5',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    backgroundColor: '#FFFFFF',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333333',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    marginHorizontal: 20,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+  },
+  inputIcon: {
+    marginRight: 10,
   },
   input: {
-    backgroundColor: '#fff',
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 12,
-    borderRadius: 5,
+    flex: 1,
+    paddingVertical: 15,
+    fontSize: 16,
   },
   noteInput: {
     height: 100,
     textAlignVertical: 'top',
   },
+  categoryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    marginHorizontal: 20,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+  },
+  categoryButtonText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333333',
+  },
   saveButton: {
     backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
+    borderRadius: 10,
+    marginHorizontal: 20,
     marginTop: 20,
+    paddingVertical: 15,
+    alignItems: 'center',
   },
   saveButtonText: {
-    color: '#fff',
-    fontSize: 18,
+    color: '#007AFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   modalContainer: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F5F5F5',
+  },
+  modalHeader: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    margin: 20,
+  },
+  categoryList: {
+    flex: 1,
   },
   categoryItem: {
+    backgroundColor: '#FFFFFF',
     padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    marginHorizontal: 20,
+    marginVertical: 5,
+    borderRadius: 10,
   },
-  closeButton: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  closeButtonText: {
-    color: '#fff',
-    fontSize: 18,
+  categoryItemText: {
+    fontSize: 16,
+    color: '#333333',
   },
   newCategoryContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginHorizontal: 20,
+    marginBottom: 20,
   },
   newCategoryInput: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    fontSize: 16,
     marginRight: 10,
   },
   addCategoryButton: {
     backgroundColor: '#007AFF',
-    padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
   },
   addCategoryButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  closeButton: {
+    backgroundColor: '#F5F5F5',
+    borderRadius: 10,
+    marginHorizontal: 20,
+    marginBottom: 20,
+    paddingVertical: 15,
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: '#007AFF',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
