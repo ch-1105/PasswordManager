@@ -129,7 +129,7 @@ function PasswordListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
   },
   header: {
     flexDirection: 'row',
@@ -137,25 +137,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    backgroundColor: '#8CB9C0',
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333333',
+    color: '#FFFFFF',
   },
   categoryList: {
-    maxHeight: 60,
+    maxHeight: 50,
     marginVertical: 15,
+    backgroundColor: '#F5F5F5',
   },
   categoryItem: {
     paddingHorizontal: 20,
     paddingVertical: 10,
     marginHorizontal: 5,
     borderRadius: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#91B5A9',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -163,12 +162,12 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   selectedCategoryItem: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#7892B5',
   },
   categoryText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333333',
+    color: '#FFFFFF',
   },
   selectedCategoryText: {
     color: '#FFFFFF',
@@ -180,7 +179,7 @@ const styles = StyleSheet.create({
   passwordItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F5F5F5',
     padding: 15,
     marginVertical: 8,
     borderRadius: 10,
@@ -194,7 +193,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#D98481',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -210,12 +209,12 @@ const styles = StyleSheet.create({
   passwordTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333333',
+    color: '#000000',
     marginBottom: 4,
   },
   passwordUsername: {
     fontSize: 14,
-    color: '#757575',
+    color: '#7892B5',
   },
   addButton: {
     position: 'absolute',
@@ -224,7 +223,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#EDCA7F',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,

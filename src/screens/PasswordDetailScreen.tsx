@@ -61,11 +61,11 @@ function PasswordDetailScreen() {
       <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="#007AFF" />
+          <Icon name="arrow-back" size={24} color="#FFFFFF" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>密码详情</Text>
         <TouchableOpacity onPress={() => navigation.navigate('AddEditPassword', { id })}>
-          <Icon name="create-outline" size={24} color="#007AFF" />
+          <Icon name="create-outline" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.content}>
@@ -103,7 +103,7 @@ function PasswordDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
   },
   header: {
     flexDirection: 'row',
@@ -111,41 +111,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    backgroundColor: '#8CB9C0',
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333333',
+    color: '#FFFFFF',
   },
   content: {
     flex: 1,
     padding: 20,
   },
   infoContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F5F5F5',
     borderRadius: 10,
     padding: 15,
     marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   label: {
     fontSize: 14,
-    color: '#757575',
+    color: '#7892B5',
     marginBottom: 5,
   },
   value: {
     fontSize: 16,
-    color: '#333333',
+    color: '#000000',
   },
   deleteButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: '#D98481',
     padding: 15,
     margin: 20,
     borderRadius: 10,

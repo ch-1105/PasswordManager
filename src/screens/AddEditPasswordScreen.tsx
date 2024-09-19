@@ -97,7 +97,7 @@ function AddEditPasswordScreen() {
       <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="#007AFF" />
+          <Icon name="arrow-back" size={24} color="#FFFFFF" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{id ? '编辑密码' : '新增密码'}</Text>
         <TouchableOpacity onPress={handleSave}>
@@ -106,21 +106,23 @@ function AddEditPasswordScreen() {
       </View>
       <ScrollView style={styles.content}>
         <View style={styles.inputContainer}>
-          <Icon name="document-text-outline" size={20} color="#757575" style={styles.inputIcon} />
+          <Icon name="document-text-outline" size={20} color="#7892B5" style={styles.inputIcon} />
           <TextInput
             style={styles.input}
             placeholder="标题"
             value={title}
             onChangeText={setTitle}
+            placeholderTextColor="#7892B5"
           />
         </View>
         <View style={styles.inputContainer}>
-          <Icon name="person-outline" size={20} color="#757575" style={styles.inputIcon} />
+          <Icon name="person-outline" size={20} color="#7892B5" style={styles.inputIcon} />
           <TextInput
             style={styles.input}
             placeholder="用户名"
             value={username}
             onChangeText={setUsername}
+            placeholderTextColor="#7892B5"
           />
         </View>
         <View style={styles.inputContainer}>
@@ -128,7 +130,7 @@ function AddEditPasswordScreen() {
             <Icon 
               name={showPassword ? "eye-outline" : "eye-off-outline"} 
               size={20} 
-              color="#757575" 
+              color="#7892B5" 
             />
           </TouchableOpacity>
           <TextInput
@@ -137,21 +139,23 @@ function AddEditPasswordScreen() {
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!showPassword}
+            placeholderTextColor="#7892B5"
           />
         </View>
         <TouchableOpacity style={styles.categoryButton} onPress={() => setShowCategoryModal(true)}>
-          <Icon name="folder-outline" size={20} color="#757575" style={styles.inputIcon} />
+          <Icon name="folder-outline" size={20} color="#7892B5" style={styles.inputIcon} />
           <Text style={styles.categoryButtonText}>{category || '选择类别'}</Text>
-          <Icon name="chevron-down" size={20} color="#757575" />
+          <Icon name="chevron-down" size={20} color="#7892B5" />
         </TouchableOpacity>
         <View style={styles.inputContainer}>
-          <Icon name="create-outline" size={20} color="#757575" style={styles.inputIcon} />
+          <Icon name="create-outline" size={20} color="#7892B5" style={styles.inputIcon} />
           <TextInput
             style={[styles.input, styles.noteInput]}
             placeholder="备注"
             value={note}
             onChangeText={setNote}
             multiline
+            placeholderTextColor="#7892B5"
           />
         </View>
       </ScrollView>
@@ -161,7 +165,7 @@ function AddEditPasswordScreen() {
           <View style={styles.modalHeader}>
             <Text style={styles.modalHeaderTitle}>选择类别</Text>
             <TouchableOpacity onPress={() => setShowCategoryModal(false)}>
-              <Icon name="close" size={24} color="#007AFF" />
+              <Icon name="close" size={24} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
           <FlatList
@@ -176,6 +180,7 @@ function AddEditPasswordScreen() {
               placeholder="新建类别"
               value={newCategory}
               onChangeText={setNewCategory}
+              placeholderTextColor="#000000"
             />
             <TouchableOpacity style={styles.addCategoryButton} onPress={handleAddCategory}>
               <Text style={styles.addCategoryButtonText}>添加</Text>
@@ -190,7 +195,7 @@ function AddEditPasswordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
   },
   header: {
     flexDirection: 'row',
@@ -198,14 +203,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    backgroundColor: '#8CB9C0',
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333333',
+    color: '#FFFFFF',
   },
   content: {
     flex: 1,
@@ -214,15 +217,10 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F5F5F5',
     borderRadius: 10,
     marginBottom: 15,
     paddingHorizontal: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   inputIcon: {
     padding: 10,
@@ -232,6 +230,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 15,
     fontSize: 16,
+    color: '#000000',
   },
   noteInput: {
     height: 100,
@@ -240,30 +239,25 @@ const styles = StyleSheet.create({
   categoryButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F5F5F5',
     borderRadius: 10,
     marginBottom: 15,
     paddingHorizontal: 15,
     paddingVertical: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   categoryButtonText: {
     flex: 1,
     fontSize: 16,
-    color: '#333333',
+    color: '#000000',
   },
   saveButtonText: {
-    color: '#007AFF',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -271,33 +265,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    backgroundColor: '#8CB9C0',
   },
   modalHeaderTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333333',
+    color: '#FFFFFF',
   },
   categoryList: {
     flex: 1,
     padding: 20,
   },
   categoryItem: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F5F5F5',
     padding: 15,
     marginBottom: 10,
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   categoryItemText: {
     fontSize: 16,
-    color: '#333333',
+    color: '#000000',
   },
   newCategoryContainer: {
     flexDirection: 'row',
@@ -306,20 +293,16 @@ const styles = StyleSheet.create({
   },
   newCategoryInput: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F5F5F5',
     borderRadius: 10,
     paddingHorizontal: 15,
     paddingVertical: 10,
     fontSize: 16,
     marginRight: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    color: '#000000',
   },
   addCategoryButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#EDCA7F',
     borderRadius: 10,
     paddingHorizontal: 15,
     paddingVertical: 10,
