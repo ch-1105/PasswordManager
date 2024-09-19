@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, SafeAreaView, ScrollView, StatusBar } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import DatabaseService from '../services/DatabaseService';
 
 function PasswordDetailScreen() {
@@ -49,82 +50,111 @@ function PasswordDetailScreen() {
 
   if (!passwordData) {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <Text>加载中...</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>标题:</Text>
-      <Text style={styles.value}>{passwordData.title}</Text>
-
-      <Text style={styles.label}>用户名:</Text>
-      <Text style={styles.value}>{passwordData.username}</Text>
-
-      <Text style={styles.label}>密码:</Text>
-      <Text style={styles.value}>{passwordData.password}</Text>
-
-      <Text style={styles.label}>分类:</Text>
-      <Text style={styles.value}>{passwordData.category}</Text>
-
-      <Text style={styles.label}>备注:</Text>
-      <Text style={styles.value}>{passwordData.note}</Text>
-
-      <TouchableOpacity
-        style={styles.editButton}
-        onPress={() => navigation.navigate('AddEditPassword', { id })}
-      >
-        <Text style={styles.editButtonText}>编辑</Text>
-      </TouchableOpacity>
-
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={24} color="#007AFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>密码详情</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('AddEditPassword', { id })}>
+          <Icon name="create-outline" size={24} color="#007AFF" />
+        </TouchableOpacity>
+      </View>
+      <ScrollView style={styles.content}>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>标题:</Text>
+          <Text style={styles.value}>{passwordData.title}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>用户名:</Text>
+          <Text style={styles.value}>{passwordData.username}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>密码:</Text>
+          <Text style={styles.value}>{passwordData.password}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>分类:</Text>
+          <Text style={styles.value}>{passwordData.category}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>备注:</Text>
+          <Text style={styles.value}>{passwordData.note}</Text>
+        </View>
+      </ScrollView>
       <TouchableOpacity
         style={styles.deleteButton}
         onPress={handleDelete}
       >
-        <Text style={styles.deleteButtonText}>删除</Text>
+        <Text style={styles.deleteButtonText}>删除密码</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333333',
+  },
+  content: {
+    flex: 1,
     padding: 20,
-    backgroundColor: '#f5f5f5',
+  },
+  infoContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 10,
+    fontSize: 14,
+    color: '#757575',
+    marginBottom: 5,
   },
   value: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  editButton: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  editButtonText: {
-    color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
+    color: '#333333',
   },
   deleteButton: {
     backgroundColor: '#FF3B30',
     padding: 15,
-    borderRadius: 5,
+    margin: 20,
+    borderRadius: 10,
     alignItems: 'center',
-    marginTop: 10,
   },
   deleteButtonText: {
-    color: '#fff',
-    fontSize: 18,
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

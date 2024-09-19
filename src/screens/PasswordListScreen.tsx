@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, Animated } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DatabaseService from '../services/DatabaseService';
@@ -9,6 +9,7 @@ function PasswordListScreen() {
   const [categories, setCategories] = useState([]);
   const [passwords, setPasswords] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('全部');
+  const scrollX = React.useRef(new Animated.Value(0)).current;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -49,35 +50,47 @@ function PasswordListScreen() {
     loadPasswords(category);
   };
 
-  const renderCategoryItem = ({ item, index }) => (
-    <TouchableOpacity
-      style={[styles.categoryItem, selectedCategory === item && styles.selectedCategoryItem]}
-      onPress={() => handleCategoryPress(item)}
-    >
-      <Text style={[styles.categoryText, selectedCategory === item && styles.selectedCategoryText]}>{item}</Text>
-    </TouchableOpacity>
-  );
+  const renderCategoryItem = ({ item, index }) => {
+    const inputRange = [-1, 0, 1];
+    const scale = scrollX.interpolate({
+      inputRange,
+      outputRange: [1, 1.2, 1],
+      extrapolate: 'clamp',
+    });
 
-  const renderPasswordItem = ({ item }) => {
-    if (!item || !item.title) {
-      return null; // 如果项目无效，不渲染任何内容
-    }
     return (
       <TouchableOpacity
-        style={styles.passwordItem}
-        onPress={() => navigation.navigate('AddEditPassword', { id: item.id })}
+        style={[styles.categoryItem, selectedCategory === item && styles.selectedCategoryItem]}
+        onPress={() => handleCategoryPress(item)}
       >
-        <View style={styles.passwordIcon}>
-          <Text style={styles.passwordIconText}>{item.title[0].toUpperCase()}</Text>
-        </View>
-        <View style={styles.passwordInfo}>
-          <Text style={styles.passwordTitle}>{item.title}</Text>
-          <Text style={styles.passwordUsername}>{item.username}</Text>
-        </View>
-        <Icon name="chevron-forward" size={20} color="#BDBDBD" />
+        <Animated.Text 
+          style={[
+            styles.categoryText, 
+            selectedCategory === item && styles.selectedCategoryText,
+            { transform: [{ scale }] }
+          ]}
+        >
+          {item}
+        </Animated.Text>
       </TouchableOpacity>
     );
   };
+
+  const renderPasswordItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.passwordItem}
+      onPress={() => navigation.navigate('AddEditPassword', { id: item.id })}
+    >
+      <View style={styles.passwordIcon}>
+        <Text style={styles.passwordIconText}>{item.title[0].toUpperCase()}</Text>
+      </View>
+      <View style={styles.passwordInfo}>
+        <Text style={styles.passwordTitle}>{item.title}</Text>
+        <Text style={styles.passwordUsername}>{item.username}</Text>
+      </View>
+      <Icon name="chevron-forward" size={20} color="#BDBDBD" />
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -85,13 +98,17 @@ function PasswordListScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>密码管理器</Text>
       </View>
-      <FlatList
+      <Animated.FlatList
         horizontal
         data={categories}
         renderItem={renderCategoryItem}
         keyExtractor={(item, index) => `${item}-${index}`}
         style={styles.categoryList}
         showsHorizontalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: true }
+        )}
       />
       <FlatList
         data={passwords}
@@ -103,7 +120,7 @@ function PasswordListScreen() {
         style={styles.addButton}
         onPress={() => navigation.navigate('AddEditPassword')}
       >
-        <Icon name="add" size={30} color="#FFFFFF" />
+        <Icon name="add" size={24} color="#FFFFFF" />
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -121,6 +138,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
   },
   headerTitle: {
     fontSize: 24,
@@ -128,8 +147,8 @@ const styles = StyleSheet.create({
     color: '#333333',
   },
   categoryList: {
-    maxHeight: 50,
-    marginBottom: 10,
+    maxHeight: 60,
+    marginVertical: 15,
   },
   categoryItem: {
     paddingHorizontal: 20,
@@ -137,28 +156,39 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     borderRadius: 20,
     backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   selectedCategoryItem: {
     backgroundColor: '#007AFF',
   },
   categoryText: {
-    color: '#333333',
+    fontSize: 16,
     fontWeight: '600',
+    color: '#333333',
   },
   selectedCategoryText: {
     color: '#FFFFFF',
   },
   passwordList: {
     flex: 1,
+    paddingHorizontal: 15,
   },
   passwordItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     padding: 15,
-    marginVertical: 5,
-    marginHorizontal: 10,
+    marginVertical: 8,
     borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   passwordIcon: {
     width: 40,
@@ -178,9 +208,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   passwordTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#333333',
+    marginBottom: 4,
   },
   passwordUsername: {
     fontSize: 14,
@@ -189,10 +220,10 @@ const styles = StyleSheet.create({
   addButton: {
     position: 'absolute',
     right: 20,
-    bottom: 40,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    bottom: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     backgroundColor: '#007AFF',
     justifyContent: 'center',
     alignItems: 'center',
