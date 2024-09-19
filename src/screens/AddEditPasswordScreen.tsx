@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DatabaseService from '../services/DatabaseService';
 
@@ -13,6 +13,7 @@ function AddEditPasswordScreen() {
   const [password, setPassword] = useState('');
   const [category, setCategory] = useState('');
   const [note, setNote] = useState('');
+  const [tags, setTags] = useState('');
 
   useEffect(() => {
     if (id) {
@@ -28,6 +29,7 @@ function AddEditPasswordScreen() {
       setPassword(passwordData.password);
       setCategory(passwordData.category);
       setNote(passwordData.note);
+      setTags(passwordData.tags.join(', '));
     } catch (error) {
       console.error('加载密码失败', error);
       Alert.alert('错误', '加载密码失败');
@@ -36,7 +38,15 @@ function AddEditPasswordScreen() {
 
   const handleSave = async () => {
     try {
-      const passwordData = { title, username, password, category, note };
+      const tagArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+      const passwordData = { 
+        title, 
+        username, 
+        password, 
+        category, 
+        note, 
+        tags: tagArray 
+      };
       if (id) {
         await DatabaseService.updatePassword({ id, ...passwordData });
       } else {
@@ -50,7 +60,7 @@ function AddEditPasswordScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <TextInput
         style={styles.input}
         placeholder="标题"
@@ -83,10 +93,16 @@ function AddEditPasswordScreen() {
         onChangeText={setNote}
         multiline
       />
+      <TextInput
+        style={styles.input}
+        placeholder="标签 (用逗号分隔)"
+        value={tags}
+        onChangeText={setTags}
+      />
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={styles.saveButtonText}>保存</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
