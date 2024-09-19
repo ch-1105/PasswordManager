@@ -1,16 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-
-// 临时数据,后续会替换为实际的数据源
-const tempData = [
-  { id: '1', title: '邮箱', category: '工作' },
-  { id: '2', title: '银行卡', category: '财务' },
-  { id: '3', title: '社交媒体', category: '个人' },
-];
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import DatabaseService from '../services/DatabaseService';
 
 function PasswordListScreen() {
   const navigation = useNavigation();
+  const [passwords, setPasswords] = useState([]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadPasswords = async () => {
+        try {
+          const data = await DatabaseService.getPasswords();
+          setPasswords(data);
+        } catch (error) {
+          console.error('Failed to load passwords', error);
+        }
+      };
+
+      loadPasswords();
+    }, [])
+  );
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -25,9 +35,9 @@ function PasswordListScreen() {
   return (
     <View style={styles.container}>
       <FlatList
-        data={tempData}
+        data={passwords}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id.toString()}
       />
       <TouchableOpacity
         style={styles.addButton}

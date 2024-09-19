@@ -1,16 +1,52 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import DatabaseService from '../services/DatabaseService';
 
 function AddEditPasswordScreen() {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { id } = route.params || {};
+
   const [title, setTitle] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [category, setCategory] = useState('');
   const [note, setNote] = useState('');
 
-  const handleSave = () => {
-    // 这里将来会实现保存逻辑
-    console.log('保存密码:', { title, username, password, category, note });
+  useEffect(() => {
+    if (id) {
+      loadPassword();
+    }
+  }, [id]);
+
+  const loadPassword = async () => {
+    try {
+      const passwordData = await DatabaseService.getPasswordById(id);
+      setTitle(passwordData.title);
+      setUsername(passwordData.username);
+      setPassword(passwordData.password);
+      setCategory(passwordData.category);
+      setNote(passwordData.note);
+    } catch (error) {
+      console.error('加载密码失败', error);
+      Alert.alert('错误', '加载密码失败');
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const passwordData = { title, username, password, category, note };
+      if (id) {
+        await DatabaseService.updatePassword({ id, ...passwordData });
+      } else {
+        await DatabaseService.addPassword(passwordData);
+      }
+      navigation.goBack();
+    } catch (error) {
+      console.error('保存密码失败', error);
+      Alert.alert('错误', '保存密码失败');
+    }
   };
 
   return (
