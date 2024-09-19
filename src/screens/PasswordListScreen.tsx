@@ -5,98 +5,93 @@ import DatabaseService from '../services/DatabaseService';
 
 function PasswordListScreen() {
   const navigation = useNavigation();
+  const [categories, setCategories] = useState([]);
   const [passwords, setPasswords] = useState([]);
-  const [filteredPasswords, setFilteredPasswords] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [tags, setTags] = useState([]);
-  const [selectedTag, setSelectedTag] = useState(null);
 
   useFocusEffect(
     React.useCallback(() => {
-      loadPasswords();
-      loadTags();
+      loadCategories();
     }, [])
   );
 
-  const loadPasswords = async () => {
+  const loadCategories = async () => {
     try {
-      const data = await DatabaseService.getPasswords();
+      const data = await DatabaseService.getCategories();
+      setCategories(data);
+    } catch (error) {
+      console.error('Failed to load categories', error);
+    }
+  };
+
+  const loadPasswordsByCategory = async (category) => {
+    try {
+      const data = await DatabaseService.getPasswordsByCategory(category);
       setPasswords(data);
-      setFilteredPasswords(data);
     } catch (error) {
       console.error('Failed to load passwords', error);
     }
   };
 
-  const loadTags = async () => {
-    try {
-      const allTags = await DatabaseService.getAllTags();
-      setTags(allTags);
-    } catch (error) {
-      console.error('Failed to load tags', error);
-    }
+  const handleCategoryPress = (category) => {
+    setSelectedCategory(category);
+    loadPasswordsByCategory(category);
   };
 
-  const handleSearch = async (query: string) => {
+  const handleSearch = (query) => {
     setSearchQuery(query);
-    if (query.trim() === '') {
-      setFilteredPasswords(passwords);
-    } else {
-      const searchResults = await DatabaseService.searchPasswords(query);
-      setFilteredPasswords(searchResults);
+    if (selectedCategory) {
+      const filteredPasswords = passwords.filter(password => 
+        password.title.toLowerCase().includes(query.toLowerCase())
+      );
+      setPasswords(filteredPasswords);
     }
   };
 
-  const handleTagFilter = async (tag: string) => {
-    if (selectedTag === tag) {
-      setSelectedTag(null);
-      setFilteredPasswords(passwords);
-    } else {
-      setSelectedTag(tag);
-      const taggedPasswords = await DatabaseService.getPasswordsByTag(tag);
-      setFilteredPasswords(taggedPasswords);
-    }
-  };
-
-  const renderItem = ({ item }) => (
+  const renderCategoryItem = ({ item }) => (
     <TouchableOpacity
-      style={styles.item}
-      onPress={() => navigation.navigate('PasswordDetail', { id: item.id })}
+      style={[styles.categoryItem, selectedCategory === item && styles.selectedCategoryItem]}
+      onPress={() => handleCategoryPress(item)}
     >
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.category}>{item.category}</Text>
+      <Text style={[styles.categoryText, selectedCategory === item && styles.selectedCategoryText]}>{item}</Text>
     </TouchableOpacity>
   );
 
-  const renderTagItem = ({ item }) => (
+  const renderPasswordItem = ({ item }) => (
     <TouchableOpacity
-      style={[styles.tagItem, selectedTag === item && styles.selectedTagItem]}
-      onPress={() => handleTagFilter(item)}
+      style={styles.passwordItem}
+      onPress={() => navigation.navigate('PasswordDetail', { id: item.id })}
     >
-      <Text style={[styles.tagText, selectedTag === item && styles.selectedTagText]}>{item}</Text>
+      <Text style={styles.passwordTitle}>{item.title}</Text>
+      <Text style={styles.passwordUsername}>{item.username}</Text>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="输入标题来进行搜索密码..."
-        value={searchQuery}
-        onChangeText={handleSearch}
-      />
       <FlatList
         horizontal
-        data={tags}
-        renderItem={renderTagItem}
+        data={categories}
+        renderItem={renderCategoryItem}
         keyExtractor={(item) => item}
-        style={styles.tagList}
+        style={styles.categoryList}
       />
-      <FlatList
-        data={filteredPasswords}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-      />
+      {selectedCategory && (
+        <>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="搜索密码..."
+            value={searchQuery}
+            onChangeText={handleSearch}
+          />
+          <FlatList
+            data={passwords}
+            renderItem={renderPasswordItem}
+            keyExtractor={(item) => item.id.toString()}
+          />
+        </>
+      )}
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => navigation.navigate('AddEditPassword')}
@@ -112,44 +107,45 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
+  categoryList: {
+    maxHeight: 50,
+    marginBottom: 10,
+  },
+  categoryItem: {
+    backgroundColor: '#e0e0e0',
+    padding: 10,
+    marginHorizontal: 5,
+    borderRadius: 20,
+  },
+  selectedCategoryItem: {
+    backgroundColor: '#007AFF',
+  },
+  categoryText: {
+    color: '#333',
+  },
+  selectedCategoryText: {
+    color: '#fff',
+  },
   searchInput: {
     backgroundColor: '#fff',
     padding: 10,
     margin: 10,
     borderRadius: 5,
   },
-  tagList: {
-    maxHeight: 50,
-    marginBottom: 10,
-  },
-  tagItem: {
-    backgroundColor: '#e0e0e0',
-    padding: 8,
-    marginHorizontal: 5,
-    borderRadius: 20,
-  },
-  selectedTagItem: {
-    backgroundColor: '#007AFF',
-  },
-  tagText: {
-    color: '#333',
-  },
-  selectedTagText: {
-    color: '#fff',
-  },
-  item: {
+  passwordItem: {
     backgroundColor: '#fff',
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
+    padding: 15,
+    marginVertical: 5,
+    marginHorizontal: 10,
     borderRadius: 5,
   },
-  title: {
-    fontSize: 18,
+  passwordTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
-  category: {
+  passwordUsername: {
     fontSize: 14,
-    color: '#888',
+    color: '#666',
   },
   addButton: {
     position: 'absolute',
