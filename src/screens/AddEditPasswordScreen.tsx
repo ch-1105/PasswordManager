@@ -92,6 +92,31 @@ function AddEditPasswordScreen() {
     setShowPassword(!showPassword);
   };
 
+  const handleDelete = async () => {
+    if (!id) return; // 如果是新建密码，不需要删除选项
+
+    Alert.alert(
+      '确认删除',
+      '您确定要删除这个密码吗？此操作不可撤销。',
+      [
+        { text: '取消', style: 'cancel' },
+        { 
+          text: '删除', 
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await DatabaseService.deletePassword(id);
+              navigation.goBack();
+            } catch (error) {
+              console.error('删除密码失败', error);
+              Alert.alert('错误', '删除密码失败');
+            }
+          }
+        },
+      ]
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -160,6 +185,12 @@ function AddEditPasswordScreen() {
         </View>
       </ScrollView>
       
+      {id && ( // 只在编辑现有密码时显示删除按钮
+        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+          <Text style={styles.deleteButtonText}>删除密码</Text>
+        </TouchableOpacity>
+      )}
+
       <Modal visible={showCategoryModal} animationType="slide">
         <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalHeader}>
@@ -308,6 +339,18 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   addCategoryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  deleteButton: {
+    backgroundColor: '#D98481',
+    padding: 15,
+    margin: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  deleteButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',

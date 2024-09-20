@@ -97,6 +97,9 @@ function PasswordListScreen() {
       <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>密码管理器</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+          <Icon name="settings-outline" size={24} color="#FFFFFF" />
+        </TouchableOpacity>
       </View>
       <Animated.FlatList
         horizontal
